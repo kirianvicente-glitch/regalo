@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tu regalo 🎁</title>
+  <style>
+    :root{
+      --bg1:#ffdde8;
+      --bg2:#fff6fb;
+      --ink:#2b2b2b;
+      --pink:#ff4d8d;
+      --pink2:#ff77a8;
+      --card:#ffffffcc;
+      --shadow: 0 18px 40px rgba(0,0,0,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, var(--bg2), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, #ffe9f2, transparent 60%),
+        linear-gradient(135deg, var(--bg1), #fff);
+      overflow:hidden;
+    }
+
+    .hearts{position:fixed; inset:0; pointer-events:none; overflow:hidden;}
+    .heart{
+      position:absolute;
+      width:14px; height:14px;
+      background: linear-gradient(135deg, var(--pink), var(--pink2));
+      transform: rotate(45deg);
+      border-radius:3px;
+      opacity:.6;
+      animation: floatUp linear infinite;
+      filter: drop-shadow(0 6px 10px rgba(255,77,141,.25));
+    }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:14px; height:14px;
+      background: inherit;
+      border-radius:50%;
+    }
+    .heart::before{left:-7px; top:0;}
+    .heart::after{left:0; top:-7px;}
+    @keyframes floatUp{
+      from{ transform: translateY(30vh) rotate(45deg); }
+      to{ transform: translateY(-120vh) rotate(45deg); }
+    }
+
+    .wrap{ width:min(880px, 92vw); padding:28px; }
+    .card{
+      background:var(--card);
+      border:1px solid rgba(255,77,141,.18);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      padding:28px;
+      position:relative;
+    }
+
+    .badge{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,77,141,.12);
+      border:1px solid rgba(255,77,141,.18);
+      font-weight:600;
+      letter-spacing:.2px;
+    }
+
+    h1{
+      margin:14px 0 6px;
+      font-size: clamp(28px, 5vw, 44px);
+      line-height:1.05;
+    }
+    .sub{
+      margin:0 0 18px;
+      font-size: clamp(14px, 2.2vw, 18px);
+      opacity:.9;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    @media (max-width: 780px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .panel{
+      border-radius:22px;
+      background: rgba(255,255,255,.75);
+      border:1px solid rgba(0,0,0,.06);
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      border-radius:18px;
+      padding:14px 16px;
+      font-weight:800;
+      font-size:16px;
+      cursor:pointer;
+      background: linear-gradient(135deg, var(--pink), var(--pink2));
+      color:white;
+      box-shadow: 0 12px 26px rgba(255,77,141,.25);
+      transform: translateY(0);
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); filter:saturate(1.05); }
+    .btn:active{ transform: translateY(1px); box-shadow: 0 8px 16px rgba(255,77,141,.22); }
+
+    .choices{
+      display:none;
+      gap:12px;
+      flex-direction:column;
+      animation: reveal .35s ease both;
+    }
+    .choices.show{ display:flex; }
+
+    @keyframes reveal{
+      from{ opacity:0; transform: translateY(-6px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    .choiceBtn{
+      border-radius:18px;
+      padding:14px 14px;
+      background: rgba(255,255,255,.85);
+      border:1px solid rgba(255,77,141,.25);
+      cursor:pointer;
+      font-weight:800;
+      text-align:left;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .choiceBtn:hover{ transform: translateY(-1px); background:white; }
+    .choiceBtn span{ font-weight:700; opacity:.85; }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,77,141,.10);
+      border:1px solid rgba(255,77,141,.18);
+      white-space:nowrap;
+    }
+
+    .result{
+      min-height: 260px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      gap:12px;
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .big{
+      font-size: clamp(18px, 3vw, 22px);
+      font-weight:900;
+      margin:0;
+    }
+    .msg{
+      margin:0;
+      font-size: 15px;
+      opacity:.92;
+      line-height:1.45;
+      max-width: 44ch;
+    }
+
+    .imgWrap{
+      width:min(360px, 80%);
+      aspect-ratio: 16/10;
+      border-radius:22px;
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow: 0 14px 30px rgba(0,0,0,.12);
+      transform: scale(.85);
+      opacity:0;
+    }
+    .imgWrap.show{
+      animation: pop .6s cubic-bezier(.2,.9,.2,1.2) both;
+    }
+    @keyframes pop{
+      0%{ transform: scale(.65) rotate(-1deg); opacity:0; }
+      60%{ transform: scale(1.03) rotate(1deg); opacity:1; }
+      100%{ transform: scale(1) rotate(0deg); opacity:1; }
+    }
+    .imgWrap img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .burst{ position:absolute; inset:0; pointer-events:none; }
+    .mini{
+      position:absolute;
+      width:10px; height:10px;
+      background: linear-gradient(135deg, var(--pink), var(--pink2));
+      transform: rotate(45deg);
+      border-radius:2px;
+      opacity:.9;
+      animation: burst 900ms ease-out forwards;
+    }
+    .mini::before,.mini::after{
+      content:"";
+      position:absolute;
+      width:10px;height:10px;
+      background:inherit;border-radius:50%;
+    }
+    .mini::before{left:-5px; top:0;}
+    .mini::after{left:0; top:-5px;}
+    @keyframes burst{
+      from{ transform: translate(0,0) rotate(45deg) scale(.8); opacity:1;}
+      to{ transform: translate(var(--dx), var(--dy)) rotate(45deg) scale(1.1); opacity:0;}
+    }
+
+    .footer{
+      margin-top:14px;
+      font-size:12px;
+      opacity:.7;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="badge">💌 Sorpresa de cumpleaños</div>
+      <h1>Hoy eliges tú, Patri ✨</h1>
+      <p class="sub">
+        Feliz cumpleaños, Patri 💖 Hoy quiero que elijas el regalo que más te haga sonreír.
+      </p>
+
+      <div class="grid">
+        <div class="panel">
+          <button class="btn" id="btnElige" aria-expanded="false">
+            🎁 Elige
+          </button>
+
+          <div class="choices" id="choices">
+            <button class="choiceBtn" data-choice="spa">
+              💆‍♀️ Fin de semana para ti sola
+              <span class="pill">spa + descanso</span>
+            </button>
+
+            <button class="choiceBtn" data-choice="ps4">
+              🎮 Una PS4
+              <span class="pill">modo gamer</span>
+            </button>
+          </div>
+
+          <div class="footer">
+            Hecho con amor (y 0€) 💗
+          </div>
+        </div>
+
+        <div class="panel result" id="result">
+          <p class="big" id="title">¿Qué vas a elegir, Patri? 😌</p>
+          <p class="msg" id="message">
+            Pase lo que pase, mi regalo favorito eres tú. 💖
+          </p>
+
+          <div class="imgWrap" id="imgWrap" aria-hidden="true">
+            <img id="img" alt="Imagen sorpresa" />
+          </div>
+
+          <div class="burst" id="burst"></div>
+        </div>
+      </div>
+
+      <p class="footer" style="margin-top:18px;">
+        Tip: si quieres, puedes cambiar frases dentro del archivo <b>index.html</b> en 2 minutos.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    // Imágenes (gratis, desde Unsplash)
+    const IMAGES = {
+      ps4: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1200&q=80",
+      spa: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=80"
+    };
+
+    // Textos románticos
+    const COPY = {
+      ps4: {
+        title: "¡PS4 elegida, Patri! 🎮💗",
+        message: "Porque me encanta verte feliz, Patri… y quiero que disfrutes cada segundo. Te mereces esto y mucho más. Te quiero 💞"
+      },
+      spa: {
+        title: "¡Finde para ti, Patri! 💆‍♀️🌸",
+        message: "Quiero regalarte calma, mimos y descanso. Que desconectes del mundo y recuerdes lo increíble que eres. Te quiero muchísimo 💖"
+      }
+    };
+
+    const btnElige = document.getElementById("btnElige");
+    const choices = document.getElementById("choices");
+    const title = document.getElementById("title");
+    const message = document.getElementById("message");
+    const imgWrap = document.getElementById("imgWrap");
+    const img = document.getElementById("img");
+    const burst = document.getElementById("burst");
+
+    btnElige.addEventListener("click", () => {
+      const isOpen = choices.classList.toggle("show");
+      btnElige.setAttribute("aria-expanded", String(isOpen));
+      btnElige.textContent = isOpen ? "✨ Elige tu regalo" : "🎁 Elige";
+    });
+
+    document.querySelectorAll(".choiceBtn").forEach(b => {
+      b.addEventListener("click", () => {
+        const c = b.dataset.choice;
+
+        title.textContent = COPY[c].title;
+        message.textContent = COPY[c].message;
+
+        img.src = IMAGES[c];
+        imgWrap.classList.remove("show");
+        void imgWrap.offsetWidth; // reset animation
+        imgWrap.classList.add("show");
+        imgWrap.setAttribute("aria-hidden", "false");
+
+        burst.innerHTML = "";
+        for(let i=0;i<18;i++){
+          const m = document.createElement("div");
+          m.className = "mini";
+          const dx = (Math.random()*240 - 120).toFixed(0) + "px";
+          const dy = (Math.random()*220 - 110).toFixed(0) + "px";
+          m.style.left = "50%";
+          m.style.top = "45%";
+          m.style.setProperty("--dx", dx);
+          m.style.setProperty("--dy", dy);
+          m.style.animationDelay = (Math.random()*120).toFixed(0) + "ms";
+          burst.appendChild(m);
+        }
+
+        choices.classList.remove("show");
+        btnElige.setAttribute("aria-expanded", "false");
+        btnElige.textContent = "🎁 Elige";
+      });
+    });
+
+    // Corazones flotando
+    const hearts = document.getElementById("hearts");
+    const N = 18;
+    for(let i=0;i<N;i++){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.style.left = (Math.random()*100).toFixed(2) + "vw";
+      h.style.top = (Math.random()*120 + 20).toFixed(2) + "vh";
+      h.style.animationDuration = (Math.random()*6 + 8).toFixed(2) + "s";
+      h.style.animationDelay = (Math.random()*6).toFixed(2) + "s";
+      h.style.transform = `rotate(45deg) scale(${(Math.random()*0.9+0.6).toFixed(2)})`;
+      hearts.appendChild(h);
+    }
+  </script>
+</body>
+</html>
